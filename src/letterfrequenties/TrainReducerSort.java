@@ -10,14 +10,17 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;    
 import org.apache.hadoop.mapred.Reporter;    
     
-public class TrainReducer extends MapReduceBase implements Reducer<Text,IntWritable,Text,IntWritable> {    
+public class TrainReducerSort extends MapReduceBase implements Reducer<IntWritable,Text,IntWritable,Text> {    
 	
-	public void reduce(Text key, Iterator<IntWritable> values,OutputCollector<Text,IntWritable> output,    
-			Reporter reporter) throws IOException {    
-		int count=0;    
+	public void reduce(IntWritable key, Iterator<Text> values,OutputCollector<IntWritable,Text> output,    
+			Reporter reporter) throws IOException { 
+		
+		Text character = new Text();
+		
 		while (values.hasNext()) {    
-			count+=values.next().get();    
-		}    
-		output.collect(key,new IntWritable(count));    
+			character = values.next();  
+			output.collect(key, character);
+		}
+		 
 	}    
 }  

@@ -16,14 +16,22 @@ public class Runner {
         JobConf conf = new JobConf(Runner.class);    
         conf.setJobName("CharCount");    
         conf.setOutputKeyClass(Text.class);    
-        conf.setOutputValueClass(IntWritable.class);            
+        conf.setOutputValueClass(IntWritable.class); 
+        
         conf.setMapperClass(TrainMapper.class);    
         conf.setCombinerClass(TrainReducer.class);    
-        conf.setReducerClass(TrainReducer.class);         
+        conf.setReducerClass(TrainReducer.class);
+        
         conf.setInputFormat(TextInputFormat.class);    
-        conf.setOutputFormat(TextOutputFormat.class);           
+        conf.setOutputFormat(TextOutputFormat.class);   
+        
         FileInputFormat.setInputPaths(conf,new Path(args[0]));    
         FileOutputFormat.setOutputPath(conf,new Path(args[1]));     
-        JobClient.runJob(conf);    
+        JobClient.runJob(conf); 
+        
+        //TO DO: 
+        // - MapReduce job chaining
+        // - setSortComparatorClass DescendingKeyComparator
+        
     } 
 }
