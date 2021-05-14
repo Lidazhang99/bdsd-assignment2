@@ -2,6 +2,10 @@ package letterfrequenties;
 
 import java.io.IOException;
 import java.text.Normalizer;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.hadoop.io.IntWritable;    
 import org.apache.hadoop.io.LongWritable;    
@@ -22,9 +26,13 @@ public class TrainMapper extends MapReduceBase implements Mapper<LongWritable,Te
     	String line = normalizeLine(value);
         
     	//Retrieve the characters from the line
-        String  tokenizer[] = line.split(""); 
+        String  tokenizer[] = line.split("");
         
-        for(String singleChar : tokenizer)  
+        List<String> charactersList = Arrays.asList(tokenizer);
+        
+        Set<String> charactersSet = new HashSet<String>(charactersList);
+        
+        for(String singleChar : charactersList)  
         {  
         	if(((!singleChar.equals("")) && (singleChar != null) && (singleChar.matches("^[a-zA-Z]*$"))))
         	{
