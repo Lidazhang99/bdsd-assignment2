@@ -1,37 +1,55 @@
 package letterfrequenties;
 
-import java.io.IOException;    
-import org.apache.hadoop.fs.Path;    
-import org.apache.hadoop.io.IntWritable;    
-import org.apache.hadoop.io.Text;    
-import org.apache.hadoop.mapred.FileInputFormat;    
-import org.apache.hadoop.mapred.FileOutputFormat;    
-import org.apache.hadoop.mapred.JobClient;    
-import org.apache.hadoop.mapred.JobConf;    
-import org.apache.hadoop.mapred.TextInputFormat;    
-import org.apache.hadoop.mapred.TextOutputFormat;    
+import java.io.IOException;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+
+
 
 public class Runner {
-    public static void main(String[] args) throws IOException{    
-        JobConf conf = new JobConf(Runner.class);    
-        conf.setJobName("CharCount");    
-        conf.setOutputKeyClass(Text.class);    
-        conf.setOutputValueClass(IntWritable.class); 
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{    
+    
+    	//Job 1
+    	Configuration conf1 = new Configuration();
+    	Job job1 = Job.getInstance(conf1);
+    	job1.setJobName("bigram matrix frequency");
+    	
+    	job1.setJarByClass(Runner.class);
+        job1.setMapperClass(MatrixFrequencyMapper.class); 
+        job1.setCombinerClass(MatrixFrequencyReducer.class);
+        job1.setReducerClass(MatrixFrequencyReducer.class);
         
-        conf.setMapperClass(TrainMapper.class);    
-        conf.setCombinerClass(TrainReducer.class);    
-        conf.setReducerClass(TrainReducer.class);
+        job1.setMapOutputKeyClass(Text.class);
+        job1.setMapOutputValueClass(IntWritable.class);
         
-        conf.setInputFormat(TextInputFormat.class);    
-        conf.setOutputFormat(TextOutputFormat.class);   
+        FileInputFormat.addInputPath(job1, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job1, new Path(args[1]));
+        job1.waitForCompletion(true);
         
-        FileInputFormat.setInputPaths(conf,new Path(args[0]));    
-        FileOutputFormat.setOutputPath(conf,new Path(args[1]));     
-        JobClient.runJob(conf); 
+        //Job 2
+        Configuration conf2 = new Configuration();
+        Job job2 = Job.getInstance(conf2);
+    	job2.setJobName("bigram matrix possibility");
+    	
+    	job2.setJarByClass(Runner.class);
+        job2.setMapperClass(MatrixPossibilityMapper.class);   
+        job2.setCombinerClass(MatrixPossibilityReducer.class);
+        job2.setReducerClass(MatrixPossibilityReducer.class);
         
-        //TO DO: 
-        // - MapReduce job chaining
-        // - setSortComparatorClass DescendingKeyComparator
+        job2.setMapOutputKeyClass(LongWritable.class);
+        job2.setMapOutputValueClass(Text.class);
         
-    } 
+        FileInputFormat.setInputPaths(job2, new Path(args[1])); //output of job1
+        FileOutputFormat.setOutputPath(job2, new Path(args[2]));
+        System.exit(job2.waitForCompletion(true) ? 0 : 1);
+      
+    }
 }

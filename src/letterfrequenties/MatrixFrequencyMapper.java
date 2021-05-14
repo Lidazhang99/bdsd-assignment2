@@ -3,21 +3,16 @@ package letterfrequenties;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.hadoop.io.IntWritable;    
-import org.apache.hadoop.io.LongWritable;    
-import org.apache.hadoop.io.Text;    
-import org.apache.hadoop.mapred.MapReduceBase;    
-import org.apache.hadoop.mapred.Mapper;    
-import org.apache.hadoop.mapred.OutputCollector;    
-import org.apache.hadoop.mapred.Reporter;    
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;    
+  
 
-public class TrainMapper extends MapReduceBase implements Mapper<LongWritable,Text,Text,IntWritable>{    
-    public void map(LongWritable key, Text value,OutputCollector<Text,IntWritable> output,     
-           Reporter reporter) throws IOException {   
+public class MatrixFrequencyMapper extends Mapper<LongWritable,Text,Text,IntWritable>{   
+	public void map(LongWritable key, Text value,Context context) throws IOException, InterruptedException {   
     	
     	//set previous character
     	String prevChar = null;
@@ -30,8 +25,6 @@ public class TrainMapper extends MapReduceBase implements Mapper<LongWritable,Te
         
         List<String> charactersList = Arrays.asList(tokenizer);
         
-        Set<String> charactersSet = new HashSet<String>(charactersList);
-        
         for(String singleChar : charactersList)  
         {  
         	if(((!singleChar.equals("")) && (singleChar != null) && (singleChar.matches("^[a-zA-Z]*$"))))
@@ -41,7 +34,7 @@ public class TrainMapper extends MapReduceBase implements Mapper<LongWritable,Te
                 
         		if (prevChar != null) {
         			charKey.set(prevChar + " " + singleChar);
-                    output.collect(charKey, count); 
+					context.write(charKey, count);
         		}
         		prevChar = singleChar;
         	}
