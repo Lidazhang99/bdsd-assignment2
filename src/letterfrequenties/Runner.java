@@ -18,7 +18,6 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class Runner {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{    
-    
     	//Job 1
     	Configuration conf1 = new Configuration();
     	Job job1 = Job.getInstance(conf1);
@@ -54,6 +53,5 @@ public class Runner {
         FileInputFormat.addInputPath(job2, new Path(args[1])); //output of job1
         FileOutputFormat.setOutputPath(job2, new Path(args[1] + "/output2"));
         System.exit(job2.waitForCompletion(true) ? 0 : 1);
-      
     }
 }
