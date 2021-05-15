@@ -15,6 +15,6 @@ public class MatrixFrequencyReducer extends Reducer<Text,IntWritable,Text,IntWri
 		while (values.hasNext()) {    
 			count+=values.next().get();    
 		}    
-		context.write(key,new IntWritable(count));
+		context.write(key, new IntWritable(count));
 		}      
 }  

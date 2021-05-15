@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -25,7 +25,6 @@ public class Runner {
     	
     	job1.setJarByClass(Runner.class);
         job1.setMapperClass(MatrixFrequencyMapper.class); 
-        job1.setCombinerClass(MatrixFrequencyReducer.class);
         job1.setReducerClass(MatrixFrequencyReducer.class);
         
         job1.setMapOutputKeyClass(Text.class);
@@ -33,6 +32,7 @@ public class Runner {
         
         FileInputFormat.addInputPath(job1, new Path(args[0]));
         FileOutputFormat.setOutputPath(job1, new Path(args[1])); //output of job 1
+        
         job1.waitForCompletion(true);
         
         //Job 2
@@ -42,11 +42,11 @@ public class Runner {
     	
     	job2.setJarByClass(Runner.class);
         job2.setMapperClass(MatrixPossibilityMapper.class);   
-        job2.setCombinerClass(MatrixPossibilityReducer.class);
         job2.setReducerClass(MatrixPossibilityReducer.class);
         
-        job2.setMapOutputKeyClass(IntWritable.class);
+        job2.setMapOutputKeyClass(Text.class);
         job2.setMapOutputValueClass(Text.class);
+        
         job2.setInputFormatClass(KeyValueTextInputFormat.class);
         job2.setOutputFormatClass(TextOutputFormat.class);
         

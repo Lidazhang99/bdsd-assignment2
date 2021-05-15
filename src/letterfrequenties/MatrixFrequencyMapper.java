@@ -13,7 +13,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public class MatrixFrequencyMapper extends Mapper<LongWritable,Text,Text,IntWritable>{   
 	public void map(LongWritable key, Text value,Context context) throws IOException, InterruptedException {   
-    	
     	//set previous character
     	String prevChar = null;
         
@@ -21,7 +20,7 @@ public class MatrixFrequencyMapper extends Mapper<LongWritable,Text,Text,IntWrit
     	String line = normalizeLine(value);
         
     	//Retrieve the characters from the line
-        String  tokenizer[] = line.split("");
+        String tokenizer[] = line.split("");
         
         List<String> charactersList = Arrays.asList(tokenizer);
         
@@ -50,5 +49,4 @@ public class MatrixFrequencyMapper extends Mapper<LongWritable,Text,Text,IntWrit
         line = line.replaceAll("\t", "");
     	return line;
     }
-    
 }
