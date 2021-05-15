@@ -4,17 +4,15 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-
-
-
 
 public class Runner {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{    
@@ -51,7 +49,35 @@ public class Runner {
         job2.setOutputFormatClass(TextOutputFormat.class);
         
         FileInputFormat.addInputPath(job2, new Path(args[1])); //output of job1
-        FileOutputFormat.setOutputPath(job2, new Path(args[1] + "/output2"));
-        System.exit(job2.waitForCompletion(true) ? 0 : 1);
+        FileOutputFormat.setOutputPath(job2, new Path(args[2]));
+        
+        job2.waitForCompletion(true);
+        
+        
+        //Job 3
+        Configuration conf3 = new Configuration();
+        Job job3 = Job.getInstance(conf3);
+    	job3.setJobName("bigram matrix predicter");
+    	
+    	job3.setJarByClass(Runner.class);
+        job3.setMapperClass(PredictMapper.class);   
+        job3.setReducerClass(PredictReducer.class);
+        
+        job3.setMapOutputKeyClass(Text.class);
+        job3.setMapOutputValueClass(Text.class);
+        
+        job3.setInputFormatClass(KeyValueTextInputFormat.class);
+        job3.setOutputFormatClass(TextOutputFormat.class);
+
+      //TAB separated input File 1
+        MultipleInputs.addInputPath(job3,new Path(args[1]), KeyValueTextInputFormat.class); //output of job1
+        //";" separated input file 2
+        MultipleInputs.addInputPath(job3, new Path(args[2]), KeyValueTextInputFormat.class); //output of job2
+        
+        
+//        FileInputFormat.addInputPath(job3, new Path(args[1] + "/output2")); 
+        FileOutputFormat.setOutputPath(job3, new Path(args[1]+ "/output3"));
+        
+        System.exit(job3.waitForCompletion(true) ? 0 : 1);
     }
 }
