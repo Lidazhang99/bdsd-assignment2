@@ -10,7 +10,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
@@ -69,13 +68,9 @@ public class Runner {
         job3.setInputFormatClass(KeyValueTextInputFormat.class);
         job3.setOutputFormatClass(TextOutputFormat.class);
 
-      //TAB separated input File 1
         MultipleInputs.addInputPath(job3,new Path(args[1]), KeyValueTextInputFormat.class); //output of job1
-        //";" separated input file 2
         MultipleInputs.addInputPath(job3, new Path(args[2]), KeyValueTextInputFormat.class); //output of job2
         
-        
-//        FileInputFormat.addInputPath(job3, new Path(args[1] + "/output2")); 
         FileOutputFormat.setOutputPath(job3, new Path(args[1]+ "/output3"));
         
         System.exit(job3.waitForCompletion(true) ? 0 : 1);

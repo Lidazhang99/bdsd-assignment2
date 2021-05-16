@@ -9,8 +9,6 @@ import objects.Pair;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-//<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
-
 public class MatrixPossibilityMapper extends Mapper<Text,Text,Text,Text>{  
 	String prevFirstCharacter = null;
 	String currentFirstCharacter = null;
